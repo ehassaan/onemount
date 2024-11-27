@@ -44,7 +44,6 @@ node_modules/
 .env.production.local
 .env.local
 
-# vuepress v2.x temp and cache directory
 .temp
 .cache
-./lib/
+lib/

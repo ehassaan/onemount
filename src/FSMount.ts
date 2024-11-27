@@ -1,7 +1,7 @@
 
+import { Subprocess } from 'bun';
 import { MountOptions, s3Defaults } from './MountOptions';
-import { TypedEmitter } from "./TypedEmitter";
-import { ChildProcessWithoutNullStreams, exec, spawn } from 'child_process';
+import { RClone, RunningProcess } from './RClone';
 
 
 export enum MountStatus {
@@ -12,13 +12,17 @@ export enum MountStatus {
 
 export class FSMount {
 
-    public readonly exit = new TypedEmitter<Error | null>();
-    public readonly stdout = new TypedEmitter<string>();
-    public readonly stderr = new TypedEmitter<string>();
+    // public readonly exit = new TypedEmitter<Error | null>();
+    // public readonly stdout = new TypedEmitter<string>();
+    // public readonly stderr = new TypedEmitter<string>();
 
-    private _status: MountStatus = MountStatus.Unmounted;
-    private _process: ChildProcessWithoutNullStreams | null = null;
+    // private _status: MountStatus = MountStatus.Unmounted;
+    private _process: RunningProcess | null = null;
     private _remoteName = globalThis.crypto.randomUUID().slice(0, 16).replaceAll("-", "");
+    private _opts: MountOptions;
+    public readonly bucket: string;
+    public readonly endpoint: string;
+    public readonly rclone: RClone;
 
     // public get status() {
     //     return this._status;
@@ -31,100 +35,63 @@ export class FSMount {
     //     }
     // }
 
-    constructor() {
+    constructor(options: MountOptions) {
+        this._opts = options;
+        const url = new URL(options.remoteUri);
+        this.endpoint = options.nativeArgs.endpoint ?? url.origin;
+        this.bucket = url.pathname.slice(1);
+        if (!this.bucket.endsWith("/")) {
+            this.bucket = this.bucket + "/";
+        }
+        this.rclone = new RClone({});
     }
 
-    getRClonePath() {
-        if (!(["darwin", "linux", "win32"].includes(process.platform))) {
-            throw Error("OS is not supported: " + process.platform);
-        }
-
-        const ext = process.platform === "win32" ? ".exe" : "";
-        let arch = null;
-        if (process.arch === "arm64") {
-            arch = "arm64";
-        }
-        else if (process.arch === "x64") {
-            arch = "amd64";
-        }
-        else {
-            throw Error("NodeJs architecture is not supported: " + process.arch);
-        }
-        return `${__dirname}/../lib/${process.platform}/${arch}/rclone${ext}`;
-    }
-
-    async createRemote(name: string, options: MountOptions) {
-        let args = `config create "${name}" ${options.type} --non-interactive`;
-        if (options.type === "s3") {
+    async createRemote(name: string) {
+        let args = ['config', 'create', name, this._opts.type, '--non-interactive'];
+        if (this._opts.type === "s3") {
             const nativeOpts = {
                 ...s3Defaults,
-                ...{ endpoint: options.remoteUri },
-                ...options.nativeArgs
+                ...{ endpoint: this.endpoint },
+                ...this._opts.nativeArgs
             };
             for (let [k, v] of Object.entries(nativeOpts)) {
-                args += ` ${k}=${v}`;
+                args.push(`${k}=${v}`);
             }
         }
-        const res = await this.runCommand(args);
-        console.log(res);
+        const res = await this.rclone.runCommand(args, 30000);
     }
 
-    async mount(options: MountOptions) {
-        await this.createRemote(this._remoteName, options);
+    async runMountProcess(remoteName: string, bucket: string, localPath: string) {
+        this._process = this.rclone.runProcess(["mount", `${remoteName}:${bucket}`, localPath]);
 
-        this._process = this.runProcess(["mount", `${this._remoteName}:${options.localPath}`]);
-
-        this._process.stdout?.on("data", msg => {
-            console.log("stdout: ", msg.toString());
+        this._process.stdout.on(data => {
+            console.log("stdout: ", data);
         });
-        this._process.stderr?.on("data", msg => {
-            console.log("stderr: ", msg);
-        });
-        this._process.on("close", msg => {
-            console.log("close: ", msg);
-        });
-        this._process.on("error", err => {
-            console.log("error: ", err);
-        });
-        this._process.on("disconnect", () => {
-            console.log("disconnect");
-        });
-        this._process.on("exit", code => {
-            console.log("exit: ", code);
-            this.dispose();
-        });
-        this._process.on("spawn", () => {
-            console.log("spawn");
+        this._process.stderr.on(data => {
+            console.log("stderr: ", data);
         });
     }
 
-    async runCommand(cmd: string) {
-        const rclone_path = this.getRClonePath();
-        let promise = new Promise<string>((resolve, reject) => {
-            exec(`${rclone_path} ${cmd}`, (err, stdout, stderr) => {
-                if (err) {
-                    return reject(stderr);
-                }
-                resolve(stdout);
-            });
-        });
-        return promise;
+    async mount() {
+        if (this._process) throw Error("Already mounted");
+        await this.createRemote(this._remoteName);
+        await this.runMountProcess(this._remoteName,
+            this.bucket,
+            this._opts.localPath);
     }
 
-    private runProcess(args: string[]) {
-        const rclone_path = this.getRClonePath();
-        let process = spawn(rclone_path, args, { stdio: "pipe" });
-        return process;
+    public unmount() {
+        if (this._process) {
+            this._process.process.kill();
+            this._process = null;
+            // this.exit.emit(null);
+        }
     }
 
     public dispose() {
-        if (this._process) {
-            this._process.kill();
-            this._process = null;
-        }
-        this.stderr.dispose();
-        this.stdout.dispose();
-        this.exit.emit(null);
-        this.exit.dispose();
+        this.unmount();
+        // this.stderr.dispose();
+        // this.stdout.dispose();
+        // this.exit.dispose();
     }
 }

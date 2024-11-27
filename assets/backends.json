@@ -1,0 +1,242 @@
+[
+    {
+        "name": "alias",
+        "description": "Alias for an existing remote"
+    },
+    {
+        "name": "memory",
+        "description": "In memory object storage system."
+    },
+    {
+        "name": "crypt",
+        "description": "Encrypt/Decrypt a remote"
+    },
+    {
+        "name": "hdfs",
+        "description": "Hadoop distributed file system"
+    },
+    {
+        "name": "local",
+        "description": "Local Disk"
+    },
+    {
+        "name": "protondrive",
+        "description": "Proton Drive"
+    },
+    {
+        "name": "storj",
+        "description": "Storj Decentralized Cloud Storage"
+    },
+    {
+        "name": "tardigrade",
+        "description": "Storj Decentralized Cloud Storage"
+    },
+    {
+        "name": "azurefiles",
+        "description": "Microsoft Azure Files"
+    },
+    {
+        "name": "fichier",
+        "description": "1Fichier"
+    },
+    {
+        "name": "filefabric",
+        "description": "Enterprise File Fabric"
+    },
+    {
+        "name": "filescom",
+        "description": "Files.com"
+    },
+    {
+        "name": "ftp",
+        "description": "FTP"
+    },
+    {
+        "name": "gofile",
+        "description": "Gofile"
+    },
+    {
+        "name": "http",
+        "description": "HTTP"
+    },
+    {
+        "name": "imagekit",
+        "description": "ImageKit.io"
+    },
+    {
+        "name": "internetarchive",
+        "description": "Internet Archive"
+    },
+    {
+        "name": "koofr",
+        "description": "Koofr, Digi Storage and other Koofr-compatible storage providers"
+    },
+    {
+        "name": "linkbox",
+        "description": "Linkbox"
+    },
+    {
+        "name": "mega",
+        "description": "Mega"
+    },
+    {
+        "name": "netstorage",
+        "description": "Akamai NetStorage"
+    },
+    {
+        "name": "opendrive",
+        "description": "OpenDrive"
+    },
+    {
+        "name": "pixeldrain",
+        "description": "Pixeldrain Filesystem"
+    },
+    {
+        "name": "qingstor",
+        "description": "QingCloud Object Storage"
+    },
+    {
+        "name": "seafile",
+        "description": "seafile"
+    },
+    {
+        "name": "sftp",
+        "description": "SSH/SFTP"
+    },
+    {
+        "name": "sia",
+        "description": "Sia Decentralized Cloud"
+    },
+    {
+        "name": "smb",
+        "description": "SMB / CIFS"
+    },
+    {
+        "name": "sugarsync",
+        "description": "Sugarsync"
+    },
+    {
+        "name": "ulozto",
+        "description": "Uloz.to"
+    },
+    {
+        "name": "uptobox",
+        "description": "Uptobox"
+    },
+    {
+        "name": "webdav",
+        "description": "WebDAV"
+    },
+    {
+        "name": "azureblob",
+        "description": "Microsoft Azure Blob Storage"
+    },
+    {
+        "name": "b2",
+        "description": "Backblaze B2"
+    },
+    {
+        "name": "quatrix",
+        "description": "Quatrix by Maytech"
+    },
+    {
+        "name": "cache",
+        "description": "Cache a remote"
+    },
+    {
+        "name": "chunker",
+        "description": "Transparently chunk/split large files"
+    },
+    {
+        "name": "combine",
+        "description": "Combine several remotes into one"
+    },
+    {
+        "name": "hasher",
+        "description": "Better checksums for other remotes"
+    },
+    {
+        "name": "oos",
+        "description": "Oracle Cloud Infrastructure Object Storage"
+    },
+    {
+        "name": "s3",
+        "description": "Amazon S3 Compliant Storage Providers including AWS, Alibaba, ArvanCloud, Ceph, ChinaMobile, Cloudflare, DigitalOcean, Dreamhost, GCS, HuaweiOBS, IBMCOS, IDrive, IONOS, LyveCloud, Leviia, Liara, Linode, Magalu, Minio, Netease, Petabox, RackCorp, Rclone, Scaleway, SeaweedFS, StackPath, Storj, Synology, TencentCOS, Wasabi, Qiniu and others"
+    },
+    {
+        "name": "swift",
+        "description": "OpenStack Swift (Rackspace Cloud Files, Blomp Cloud Storage, Memset Memstore, OVH)"
+    },
+    {
+        "name": "union",
+        "description": "Union merges the contents of several upstream fs"
+    },
+    {
+        "name": "compress",
+        "description": "Compress a remote"
+    },
+    {
+        "name": "dropbox",
+        "description": "Dropbox"
+    },
+    {
+        "name": "gphotos",
+        "description": "Google Photos"
+    },
+    {
+        "name": "hidrive",
+        "description": "HiDrive"
+    },
+    {
+        "name": "jottacloud",
+        "description": "Jottacloud"
+    },
+    {
+        "name": "mailru",
+        "description": "Mail.ru Cloud"
+    },
+    {
+        "name": "onedrive",
+        "description": "Microsoft OneDrive"
+    },
+    {
+        "name": "pcloud",
+        "description": "Pcloud"
+    },
+    {
+        "name": "pikpak",
+        "description": "PikPak"
+    },
+    {
+        "name": "premiumizeme",
+        "description": "premiumize.me"
+    },
+    {
+        "name": "putio",
+        "description": "Put.io"
+    },
+    {
+        "name": "sharefile",
+        "description": "Citrix Sharefile"
+    },
+    {
+        "name": "yandex",
+        "description": "Yandex Disk"
+    },
+    {
+        "name": "zoho",
+        "description": "Zoho"
+    },
+    {
+        "name": "box",
+        "description": "Box"
+    },
+    {
+        "name": "drive",
+        "description": "Google Drive"
+    },
+    {
+        "name": "gcs",
+        "description": "Google Cloud Storage (this is not Google Drive)"
+    }
+]

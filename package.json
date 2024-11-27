@@ -2,6 +2,8 @@
   "name": "onemount",
   "version": "0.1.0",
   "scripts": {
+    "download_libs": "bun scripts/download_binary.ts",
+    "generate_backends": "bun scripts/generate_backends.ts",
     "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "test": "jest tests/"
   },

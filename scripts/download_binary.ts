@@ -17,17 +17,17 @@ const template_url = "https://downloads.rclone.org/v<version>/rclone-v<version>-
 
 async function download(url, path) {
     console.log("Downloading: ", url);
-
+    try {
+        await fs.access(dirname(path));
+    }
+    catch (e) {
+        console.log("Creating Directory: ", dirname(path));
+        await fs.mkdir(dirname(path), { recursive: true });
+    }
     const res = await fetch(url);
     const directory = await unzipper.Open.buffer(Buffer.from(await res.arrayBuffer()));
     const file = directory.files.find(d => d.path.endsWith("rclone") || d.path.endsWith("rclone.exe"));
     const content = await file.buffer();
-    try {
-        fs.access(dirname(path));
-    }
-    catch {
-        await fs.mkdir(dirname(path), { recursive: true });
-    }
     await fs.writeFile(path, content);
     console.log("Downloaded to: ", path);
 }
