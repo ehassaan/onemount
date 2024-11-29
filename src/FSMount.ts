@@ -43,7 +43,7 @@ export class FSMount {
         if (!this.bucket.endsWith("/")) {
             this.bucket = this.bucket + "/";
         }
-        this.rclone = new RClone({});
+        this.rclone = new RClone();
     }
 
     async createRemote(name: string) {

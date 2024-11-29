@@ -26,7 +26,7 @@ async function checkBackends() {
 }
 
 async function getAllOptions(remote: string) {
-    const args = ["config", "create", "test", remote, "--non-interactive", "--all", "config_fs_advanced=true"];
+    const args = ["config", "create", "test", remote, "--non-interactive", "--all", "--dry-run", "config_fs_advanced=true"];
     const props = await getOptions(args, []);
     return props;
 }
@@ -37,7 +37,6 @@ async function getOptions(args: string[], props: any[]) {
         if (!res.stdout.includes("Option")) {
             return props;
         }
-        console.log("prop: ", res.stdout);
         const result = JSON.parse(res.stdout);
         props.push(result.Option);
         return await getOptions([...args, `${result.Option.Name}=`], props);
@@ -49,17 +48,19 @@ async function getOptions(args: string[], props: any[]) {
 
 }
 
-const backends: any[] = [];
+let backends: any = {};
 
 async function main() {
     for (const b of await checkBackends()) {
         const res = await getAllOptions(b.name);
-        console.log("ALL Props: ", res);
-        backends.push({
+        console.log("ALL Props: ", b.name, res.length);
+        backends[b.name] = {
             ...b,
-            options: res
-        });
+            options: Object.fromEntries(res.map(opt => [opt.Name, opt]))
+        };
     }
+    console.log(Object.keys(backends));
+
     try {
         mkdir(`${__dirname}/../assets/`, { recursive: true });
     }
