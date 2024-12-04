@@ -1,44 +1,37 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "jsx": "preserve",
+    "target": "ES2017",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": [
       "ES2021.String",
-      "DOM",
-      "DOM.Iterable"
     ],
-    "rootDir": "./",
     "skipLibCheck": true,
     "esModuleInterop": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "declaration": true,
-    "declarationMap": true,
-    "declarationDir": "typings",
-    "allowImportingTsExtensions": false,
+    // "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
+    "allowJs": true,
     "noEmit": true,
     /* Linting */
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true,
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-    },
+      ]
+    }
   },
   "include": [
     "src",
-    "rollup.config.ts",
-    "tests"
+    "rollup.config.ts"
   ],
   "exclude": [
-    "node_modules",
-    "dist"
+    "src/kernel"
   ]
 }

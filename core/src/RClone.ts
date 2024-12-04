@@ -1,6 +1,5 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import { TypedEmitter } from './TypedEmitter';
-import { join } from "path";
 
 
 export interface RCloneOptions {
@@ -113,6 +112,6 @@ export class RClone {
         else {
             throw Error("NodeJs architecture is not supported: " + process.arch);
         }
-        return join(__dirname, '..', 'lib', process.platform, arch, `rclone${ext}`);
+        return `${__dirname}/../lib/${process.platform}/${arch}/rclone${ext}`;
     }
 }

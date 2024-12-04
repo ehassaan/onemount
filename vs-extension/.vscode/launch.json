@@ -1,0 +1,21 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/dist/build/index.cjs",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/dist",
+        "--folder-uri=${workspaceFolder}/sample/",
+        "${workspaceFolder}/sample/sample.ipynb"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dist/build/*.cjs"
+      ],
+      // "preLaunchTask": "npm: webpack"
+    }
+  ]
+}

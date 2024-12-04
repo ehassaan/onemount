@@ -1,5 +1,4 @@
 
-import { Subprocess } from 'bun';
 import { MountOptions, s3Defaults } from './MountOptions';
 import { RClone, RunningProcess } from './RClone';
 

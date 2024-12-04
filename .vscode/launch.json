@@ -1,0 +1,21 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      // "runtimeExecutable": "${workspaceFolder}/vs-extension/out/index.js",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vs-extension/",
+        "--folder-uri=${workspaceFolder}/vs-extension/sample/",
+        "${workspaceFolder}/vs-extension/sample/sample.ipynb"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/vs-extension/out/*.js"
+      ],
+      // "preLaunchTask": "npm: webpack"
+    }
+  ]
+}
