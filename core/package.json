@@ -1,9 +1,9 @@
 {
   "name": "@ducklake/core",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "scripts": {
-    "download_libs": "node scripts/download_binary.ts",
-    "generate_options": "node scripts/generate_options.ts",
+    "download_libs": "bun scripts/download_binary.ts",
+    "generate_options": "bun scripts/generate_options.ts",
     "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "test": "jest tests/"
   },

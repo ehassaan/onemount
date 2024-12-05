@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ducklake/core':
-        specifier: ../core/ducklake-core-0.2.2.tgz
-        version: file:../core/ducklake-core-0.2.2.tgz
+        specifier: ../core/ducklake-core-0.2.4.tgz
+        version: file:../core/ducklake-core-0.2.4.tgz
       handlebars:
         specifier: ^4.7.8
         version: 4.7.8
@@ -480,9 +480,9 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@ducklake/core@file:../core/ducklake-core-0.2.2.tgz':
-    resolution: {integrity: sha512-qKN5qT82Q60HPhqes+W8xQO7fMD60QWslat2wtzaH8VSRhSY8mf13KXF4ZR/MN0XDZp5dE5NulQAHXI2ZxCz/g==, tarball: file:../core/ducklake-core-0.2.2.tgz}
-    version: 0.2.2
+  '@ducklake/core@file:../core/ducklake-core-0.2.4.tgz':
+    resolution: {integrity: sha512-MN2QJ+0Lr3VnLI9ch0kr8/ym2rWNpqzrNlRwVoPgk6zaSPo2JRypXU2+c8Ntu8E0BlxhV2GVMVZs5C7ph+Nm3A==, tarball: file:../core/ducklake-core-0.2.4.tgz}
+    version: 0.2.4
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -3613,7 +3613,7 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.9
     optional: true
 
-  '@ducklake/core@file:../core/ducklake-core-0.2.2.tgz':
+  '@ducklake/core@file:../core/ducklake-core-0.2.4.tgz':
     dependencies:
       '@aws-sdk/client-s3': 3.703.0
       '@azure/storage-blob': 12.26.0

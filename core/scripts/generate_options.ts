@@ -35,17 +35,20 @@ async function getOptions(args: string[], props: any[]) {
     try {
         const res = await rclone.runCommand(args, 10000);
         if (!res.stdout.includes("Option")) {
+            console.log("No options: ", res.stdout);
             return props;
         }
         const result = JSON.parse(res.stdout);
         props.push(result.Option);
+        if (result.Option.Name == "description") {
+            return props;
+        }
         return await getOptions([...args, `${result.Option.Name}=`], props);
     }
     catch (e) {
         console.log("Error: ", e);
         return props;
     }
-
 }
 
 let backends: any = {};
@@ -56,7 +59,7 @@ async function main() {
         console.log("ALL Props: ", b.name, res.length);
         backends[b.name] = {
             ...b,
-            options: Object.fromEntries(res.map(opt => [opt.Name, opt]))
+            options: res //Object.fromEntries(res.map(opt => [opt.Name, opt]))
         };
     }
     console.log(Object.keys(backends));

@@ -2,12 +2,6 @@
 
 var node_child_process = require('node:child_process');
 
-const s3Defaults = {
-    config_fs_advanced: true,
-    no_check_bucket: true,
-    env_auth: true
-};
-
 class TypedEmitter {
     constructor() {
         Object.defineProperty(this, "_subscriptions", {
@@ -234,7 +228,12 @@ class FSMount {
         });
         this._opts = options;
         const url = new URL(options.remoteUri);
-        this.endpoint = options.nativeArgs.endpoint ?? url.origin;
+        if ("endpoint" in options.nativeArgs) {
+            this.endpoint = options.nativeArgs.endpoint;
+        }
+        else {
+            this.endpoint = url.origin;
+        }
         this.bucket = url.pathname.slice(1);
         if (!this.bucket.endsWith("/")) {
             this.bucket = this.bucket + "/";
@@ -245,7 +244,6 @@ class FSMount {
         let args = ['config', 'create', name, this._opts.type, '--non-interactive'];
         if (this._opts.type === "s3") {
             const nativeOpts = {
-                ...s3Defaults,
                 ...{ endpoint: this.endpoint },
                 ...this._opts.nativeArgs
             };

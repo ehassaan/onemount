@@ -11,7 +11,7 @@ console.log("Working dir: ", process.cwd());
 
 const remoteName = "ducklake-test-1";
 
-const config: MountOptions = {
+const config: MountOptions<"s3"> = {
   type: "s3",
   authType: "KEY",
   remoteUri: "http://localhost:9000/testbucket/",

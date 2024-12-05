@@ -118,7 +118,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@ducklake/core": "../core/ducklake-core-0.2.2.tgz",
+    "@ducklake/core": "../core/ducklake-core-0.2.4.tgz",
     "handlebars": "^4.7.8"
   }
 }

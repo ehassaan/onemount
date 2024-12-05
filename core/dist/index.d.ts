@@ -14739,14 +14739,34 @@ interface S3MountOptions {
     profile?: string;
     session_token?: string;
 }
-interface MountOptions {
-    type: keyof typeof backends;
+interface MountOptions<T extends BackendType> {
+    type: T;
     localPath: string;
     remoteUri: string;
     authType: "SSO" | "KEY";
-    nativeArgs: {
-        [k: string]: any;
-    };
+    nativeArgs: Partial<{
+        [k in NativeArgName<T>]: any;
+    }>;
+}
+type BackendType = keyof typeof backends;
+type Backend<T extends BackendType> = typeof backends[T];
+type NativeArgName<T extends BackendType> = keyof Backend<T>["options"];
+interface BackendOption {
+    Name: string;
+    FieldName: string;
+    Help: string;
+    Default: any;
+    Value: null;
+    Hide: number;
+    Required: boolean;
+    IsPassword: boolean;
+    NoPrefix: boolean;
+    Advanced: boolean;
+    Exclusive: boolean;
+    Sensitive: boolean;
+    DefaultStr: string;
+    ValueStr: string;
+    Type: string;
 }
 
 declare class TypedEmitter<T = any> {
@@ -14791,14 +14811,14 @@ declare enum MountStatus {
     Unmounted = 1,
     Disposed = 2
 }
-declare class FSMount {
+declare class FSMount<T extends BackendType> {
     private _process;
     private _remoteName;
     private _opts;
     readonly bucket: string;
     readonly endpoint: string;
     readonly rclone: RClone;
-    constructor(options: MountOptions);
+    constructor(options: MountOptions<T>);
     createRemote(name: string): Promise<void>;
     runMountProcess(remoteName: string, bucket: string, localPath: string): Promise<void>;
     mount(): Promise<void>;
@@ -28144,4 +28164,4 @@ declare let BackendOptions: {
     };
 };
 
-export { BackendOptions, FSMount, type MountOptions, MountStatus, type ProcessResult, RClone, type RCloneOptions, type RunningProcess, type S3MountOptions };
+export { type Backend, type BackendOption, BackendOptions, type BackendType, FSMount, type MountOptions, MountStatus, type NativeArgName, type ProcessResult, RClone, type RCloneOptions, type RunningProcess, type S3MountOptions };

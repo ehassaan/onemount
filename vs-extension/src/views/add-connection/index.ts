@@ -1,9 +1,11 @@
 
 import { readFileSync } from "fs";
 import hb from "handlebars";
+import { BackendOption } from "@ducklake/core";
+
 
 export interface AddConnectionOptions {
-    fields: { label: string, id: string; }[];
+    fields: BackendOption[];
 }
 
 export function getTemplate() {

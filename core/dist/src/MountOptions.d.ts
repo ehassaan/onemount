@@ -15,18 +15,33 @@ export interface S3MountOptions {
     profile?: string;
     session_token?: string;
 }
-export declare const s3Defaults: {
-    config_fs_advanced: boolean;
-    no_check_bucket: boolean;
-    env_auth: boolean;
-};
-export interface MountOptions {
-    type: keyof typeof backends;
+export interface MountOptions<T extends BackendType> {
+    type: T;
     localPath: string;
     remoteUri: string;
     authType: "SSO" | "KEY";
-    nativeArgs: {
-        [k: string]: any;
-    };
+    nativeArgs: Partial<{
+        [k in NativeArgName<T>]: any;
+    }>;
+}
+export type BackendType = keyof typeof backends;
+export type Backend<T extends BackendType> = typeof backends[T];
+export type NativeArgName<T extends BackendType> = keyof Backend<T>["options"];
+export interface BackendOption {
+    Name: string;
+    FieldName: string;
+    Help: string;
+    Default: any;
+    Value: null;
+    Hide: number;
+    Required: boolean;
+    IsPassword: boolean;
+    NoPrefix: boolean;
+    Advanced: boolean;
+    Exclusive: boolean;
+    Sensitive: boolean;
+    DefaultStr: string;
+    ValueStr: string;
+    Type: string;
 }
 //# sourceMappingURL=MountOptions.d.ts.map

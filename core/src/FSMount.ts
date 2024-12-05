@@ -1,5 +1,5 @@
 
-import { MountOptions, s3Defaults } from './MountOptions';
+import { BackendType, MountOptions } from './MountOptions';
 import { RClone, RunningProcess } from './RClone';
 
 
@@ -9,7 +9,7 @@ export enum MountStatus {
     Disposed
 }
 
-export class FSMount {
+export class FSMount<T extends BackendType> {
 
     // public readonly exit = new TypedEmitter<Error | null>();
     // public readonly stdout = new TypedEmitter<string>();
@@ -18,7 +18,7 @@ export class FSMount {
     // private _status: MountStatus = MountStatus.Unmounted;
     private _process: RunningProcess | null = null;
     private _remoteName = globalThis.crypto.randomUUID().slice(0, 16).replaceAll("-", "");
-    private _opts: MountOptions;
+    private _opts: MountOptions<T>;
     public readonly bucket: string;
     public readonly endpoint: string;
     public readonly rclone: RClone;
@@ -34,10 +34,15 @@ export class FSMount {
     //     }
     // }
 
-    constructor(options: MountOptions) {
+    constructor(options: MountOptions<T>) {
         this._opts = options;
         const url = new URL(options.remoteUri);
-        this.endpoint = options.nativeArgs.endpoint ?? url.origin;
+        if ("endpoint" in options.nativeArgs) {
+            this.endpoint = options.nativeArgs.endpoint as string;
+        }
+        else {
+            this.endpoint = url.origin;
+        }
         this.bucket = url.pathname.slice(1);
         if (!this.bucket.endsWith("/")) {
             this.bucket = this.bucket + "/";
@@ -49,7 +54,6 @@ export class FSMount {
         let args = ['config', 'create', name, this._opts.type, '--non-interactive'];
         if (this._opts.type === "s3") {
             const nativeOpts = {
-                ...s3Defaults,
                 ...{ endpoint: this.endpoint },
                 ...this._opts.nativeArgs
             };
