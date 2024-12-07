@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src 'nonce-<%= nonce %>'; img-src https: 'nonce-<%= nonce %>'; script-src 'nonce-<%= nonce %>';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%% title %>
+  </title>
+  <style nonce="<%= nonce %>">
+    body {
+      background-color: var(--vscode-editor-background);
+    }
+
+    .container {
+      width: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .collapse-btn {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      background-color: inherit;
+      border: none;
+      display: block;
+      color: var(--vscode-editor-foreground);
+      flex-basis: 100%;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin: 25px;
+    }
+
+    .advanced-section {
+      flex-basis: 100%;
+    }
+
+    .advanced-fields {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .form .field {
+      display: flex;
+      flex-basis: 200px;
+      flex-direction: column;
+      margin: 0 20px 20px 0;
+      flex-grow: 1;
+      align-items: stretch;
+    }
+
+    .field label {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    .field input {
+      padding: 5px;
+      border: 1px solid var(--vscode-widget-border);
+    }
+    .actions {
+      display: flex;
+      flex-direction: row;
+    }
+    .actions button {
+      margin-right: 10px;
+      margin-top: 10px;
+      background-color: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border: none;
+      padding: 6px 12px;
+    }
+    .actions button:hover {
+      background-color: var(--vscode-button-hoverBackground);
+    }
+  </style>
+</head>
+
+<body style="background-color: yellow;">
+
+  <div class="container">
+    <h1 class="heading">
+      <%= title %>
+    </h1>
+    <form class="form" onsubmit="onFormSubmit">
+      <% fields.forEach(field=> { %>
+        <% if (!field.Advanced) { %>
+          <div class="field">
+            <label for="<%= field.Name %>">
+              <%= field.Name %><%= field.IsRequired? ' *' : '' %>
+            </label>
+            <input type="text" placeholder="<%= field.DefaultStr %>" name="<%= field.Name %>" type="<%= field.IsPassword ? 'password' : 'text' %>" <%= field.Examples?.length > 0 ? 'list=options-' + field.Name : '' %> >
+            <datalist id="options-<%= field.Name %>">
+              <% (field.Examples?? []).forEach(example => { %>
+                <option value="<%= example.Value %>"></option>
+              <% }) %>
+              <% if (field.Examples?.length == 0 && field.Type == 'bool') { %>
+                <option>true</option>
+                <option>false</option>
+              <% } %>
+            </datalist>
+            <!-- <input placeholder="<%= field.DefaultStr %>" name="<%= field.Name %>" type="<%= field.IsPassword ? 'password' : 'text' %>"> -->
+          </div>
+          <% } %>
+            <% }) %>
+
+              <div class="advanced-section">
+                <button type="button" class="collapse-btn" id="toggle-advanced">▼ Advanced Options</button>
+                <div id="advanced-fields" class="advanced-fields hidden">
+                  <% fields.forEach(field=> { %>
+                    <% if (field.Advanced) { %>
+                      <div class="field">
+                        <label for="<%= field.Name %>">
+                          <%= field.Name %><%= field.IsRequired? ' *' : '' %>
+                        </label>
+                        <input type="text" placeholder="<%= field.DefaultStr %>" name="<%= field.Name %>" type="<%= field.IsPassword ? 'password' : 'text' %>" <%= field.Examples?.length > 0 ? 'list="options"' : '' %> >
+                        <datalist id="options">
+                          <% (field.Examples?? []).forEach(example => { %>
+                            <option><%= example.Value %></option>
+                          <% }) %>
+                          <% if (field.Examples?.length == 0 && field.Type == 'bool') { %>
+                            <option>true</option>
+                            <option>false</option>
+                          <% } %>
+                        </datalist>
+                      </div>
+                      <% } %>
+                        <% }) %>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button @click="onFormSubmit" type="button">Add Connection</button>
+                <button type="reset">Cancel</button>
+              </div>
+    </form>
+  </div>
+
+  <script nonce="<%= nonce %>">
+    function onFormSubmit(form) {
+      console.log(form);
+    }
+
+    const button = document.getElementById("toggle-advanced");
+
+    button.addEventListener('click', (ev) => {
+      const collapsibleContent = document.getElementById("advanced-fields");
+      if (collapsibleContent.classList.contains('hidden')) {
+        collapsibleContent.classList.remove('hidden');
+        button.innerHTML = '▲ Advanced Options';
+      }
+      else {
+        collapsibleContent.classList.add('hidden');
+        button.innerHTML = '▼ Advanced Options';
+      }
+    });
+
+    // let count = 0;
+    // setInterval(() => {
+    //   counter.textContent = count++;
+    // }, 100);
+
+    // // Handle the message inside the webview
+    // window.addEventListener('message', event => {
+
+    //   const message = event.data; // The JSON data our extension sent
+
+    //   switch (message.command) {
+    //     case 'refactor':
+    //       count = Math.ceil(count * 0.5);
+    //       counter.textContent = count;
+    //       break;
+    //   }
+    // });
+
+
+    // (function () {
+    //   const vscode = acquireVsCodeApi();
+    //   const counter = document.getElementById('lines-of-code-counter');
+
+    //   let count = 0;
+    //   setInterval(() => {
+    //     counter.textContent = count++;
+
+    //     // Alert the extension when our cat introduces a bug
+    //     if (Math.random() < 0.001 * count) {
+    //       vscode.postMessage({
+    //         command: 'alert',
+    //         text: '🐛  on line ' + count
+    //       });
+    //     }
+    //   }, 100);
+    // }())
+  </script>
+</body>
+
+</html>

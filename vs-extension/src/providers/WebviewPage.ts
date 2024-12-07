@@ -61,7 +61,7 @@ export default class WebviewPage<Options = any> implements Disposable {
                     enableScripts: true,
                     retainContextWhenHidden: true, // @OPTIMIZE remove and migrate to state restore
                     enableCommandUris: true,
-                    localResourceRoots: [Uri.file(Context.extensionPath), Uri.file(path.resolve(Context.extensionPath, '..'))],
+                    localResourceRoots: [Uri.file(path.resolve(__dirname))]
                     // enableFindWidget: true,
                 }
             );
@@ -76,7 +76,13 @@ export default class WebviewPage<Options = any> implements Disposable {
                 this.disposables
             );
             this.panel.onDidDispose(this.dispose, null, this.disposables);
-            this.panel.webview.html = this.getHtml({ title: this.title, ...options });
+            this.panel.webview.html = this.getHtml({
+                nonce: getNonce(),
+                cspSource: this.panel.webview.cspSource,
+                scriptUri: this.panel.webview.asWebviewUri(Uri.file(path.resolve(__dirname, 'views', 'add-connection', 'script.js'))),
+                title: this.title,
+                ...options,
+            });
         } else {
             this.panel.reveal(undefined, this.preserveFocus);
         }
@@ -166,3 +172,13 @@ export default class WebviewPage<Options = any> implements Disposable {
         if (this.panel) this.panel.title = this.title;
     };
 }
+
+function getNonce() {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+

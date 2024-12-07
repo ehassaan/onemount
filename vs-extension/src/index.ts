@@ -1,6 +1,4 @@
 import * as vscode from 'vscode';
-import os from "os";
-import fs from "fs";
 import Context from "./services/context";
 import registerConnection from './connections/connection';
 

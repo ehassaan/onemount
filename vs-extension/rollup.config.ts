@@ -33,7 +33,7 @@ const config = [
                         dest: "out/assets/"
                     },
                     {
-                        src: "src/views/**/*.html",
+                        src: "src/views/**/*",
                         dest: "out/"
                     },
                 ]
