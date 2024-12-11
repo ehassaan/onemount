@@ -19,6 +19,8 @@
 
     .hidden {
       visibility: collapse;
+      height: 0;
+      overflow: hidden;
     }
 
     .collapse-btn {
@@ -100,11 +102,12 @@
     <h1 class="heading">
       <%= title %>
     </h1>
-    <form class="form" onsubmit="onFormSubmit">
+    <select id="connection-type">
+    <form id="connection-form" class="form">
       <% fields.forEach(field=> { %>
         <% if (!field.Advanced) { %>
           <div class="field">
-            <label for="input-<%= field.Name %>">
+            <label for="input-<%= field.Name %>" title="<%= field.Help %>">
               <%= field.Name %><%= field.IsRequired? ' *' : '' %>
             </label>
             <input id="input-<%= field.Name %>" type="text" placeholder="<%= field.DefaultStr %>"
@@ -119,7 +122,7 @@
             <% fields.forEach(field=> { %>
               <% if (field.Advanced) { %>
                 <div class="field">
-                  <label for="input-<%= field.Name %>">
+                  <label for="input-<%= field.Name %>" title="<%= field.Help %>">
                     <%= field.Name %><%= field.IsRequired? ' *' : '' %>
                   </label>
                   <input id="input-<%= field.Name %>" type="text" placeholder="<%= field.DefaultStr %>"
@@ -131,8 +134,8 @@
         </div>
 
         <div class="actions">
-          <button @click="onFormSubmit" type="button">Add Connection</button>
-          <button type="reset">Cancel</button>
+          <button id="btn-submit" type="submit">Add Connection</button>
+          <button id="btn-cancel" type="button">Cancel</button>
         </div>
     </form>
   </div>
@@ -142,6 +145,7 @@
 
   <script nonce="<%= nonce %>">
     let autoCompleteSelector, autoInput;
+    const vscode = acquireVsCodeApi();
 
     <% fields.forEach(field => { %>
       <% if (field.Examples && field.Examples.length > 0) { %>
@@ -169,9 +173,31 @@
       <% } %>
     <% }) %>
 
-    function onFormSubmit(form) {
-      console.log(form);
-    }
+    document.getElementById("connection-form").addEventListener("submit", (ev) => {
+      document.getElementById("btn-submit").disabled = true;
+      console.log("Submit: ", ev);
+      ev.preventDefault();
+      const formData = new FormData(ev.target);
+      const data = Object.fromEntries(formData);
+      console.log(data);
+
+      vscode.postMessage({
+        command: 'save',
+        data,
+      });
+    });
+
+    document.getElementById("btn-cancel").addEventListener("click", (ev) => {
+      console.log("Cancel");
+      vscode.postMessage({
+        command: 'cancel',
+      });
+    });
+
+    window.addEventListener("message", (ev) => {
+      console.log("Message: ", ev);
+      document.getElementById("btn-submit").disabled = false;
+    });
 
     const button = document.getElementById("toggle-advanced");
 

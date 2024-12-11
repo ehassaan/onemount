@@ -2,7 +2,7 @@
 import WebviewPage from '@/providers/WebviewPage';
 import { AddConnectionOptions, getTemplate } from '@/views/add-connection';
 import vscode, { ExtensionContext } from "vscode";
-import { BackendOptions, BackendOption } from "@ducklake/core";
+import { BackendOptions, BackendOption, FSMount } from "@ducklake/core";
 import path from 'path';
 
 let connections = [];
@@ -39,6 +39,24 @@ export default function register(context: ExtensionContext) {
         //     cspSource: panel.webview.cspSource,
         //     scriptUri: panel.webview.asWebviewUri(vscode.Uri.file(path.resolve(__dirname, 'views', 'add-connection', 'script.js'))),
         // });
+        panel.messagesHandler = async ({ command, data }) => {
+            console.log("Action: ", command, "data: ", data);
+            if (command == "cancel") {
+                panel.hide();
+            }
+            else if (command == "save") {
+                console.log("Saving: ", data);
+                try {
+                    const mount = new FSMount<"s3">(data);
+                    await mount.mount();
+                    panel.hide();
+                }
+                catch(e) {
+                    console.log("Error while mounting: ", e);
+                    panel.sendMessage("error", e.message);
+                }
+            }
+        };
         panel.onDidDispose(() => {
             console.log("Webiew panel disposed");
         });

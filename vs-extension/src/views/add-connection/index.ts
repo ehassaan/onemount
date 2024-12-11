@@ -13,4 +13,3 @@ export function getTemplate() {
     const file = readFileSync(`${__dirname}/views/add-connection/index.ejs`).toString("utf8");
     return ejs.compile(file);
 }
-

@@ -36,7 +36,7 @@ export default class WebviewPage<Options = any> implements Disposable {
 
     public readonly id: string;
     public readonly title: string;
-    private messagesHandler: (...args: any) => void;
+    public messagesHandler: (...args: any) => void;
     private getHtml = (options: Options) => '';
 
     private panel: WebviewPanel;
