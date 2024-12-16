@@ -23,6 +23,7 @@
 
 /* semantic color variables for this project */
 :root {
+  --vscode: var(--vscode-input-background);
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
@@ -47,6 +48,19 @@
 
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
+
+    --dl-input-background: var(--vscode-input-background, green);
+    --dl-input-foreground: var(--vscode-input-foreground, white);
+    --dl-input-border: var(--vscode-input-border, yellow);
+
+    --dl-editor-background: var(--vscode-editor-background, yellow);
+    --dl-editor-foreground: var(--vscode-editor-foreground, yellow);
+
+    --dl-button-foreground: var(--vscode-button-foreground, yellow);
+    --dl-button-background: var(--vscode-button-background, yellow);
+    --dl-button-hoverBackground: var(--vscode-button-hoverBackground, yellow);
+    --dl-button-border: var(--vscode-button-border, yellow);
+
   }
 }
 
