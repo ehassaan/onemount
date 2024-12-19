@@ -1,43 +1,60 @@
 <template>
     <div class="container">
 
-        <form class="form">
+        <form :class="$style.form" @submit="onSubmit" @reset="onCancel">
 
-            <InputField label="Name" :required="true" class="field" placeholder="myconnection"></InputField>
-            <InputField label="Remote URI" :required="true" placeholder="https://example.com"></InputField>
-            <InputField label="Local Path" placeholder="./ducklake/"></InputField>
+            <InputField v-model="mForm.name" :class="$style.field" label="Name" required class="field"
+                placeholder="myconnection">
+            </InputField>
+            <InputField v-model="mForm.targetUri" :class="$style.field" label="Remote URI" required
+                placeholder="https://example.com">
+            </InputField>
+            <InputField v-model="mForm.localPath" :class="$style.field" label="Local Path" placeholder="./ducklake/">
+            </InputField>
 
-            <Dropdown class="field" label="Authentication Type" v-model="authType"
-                :items="authTypes[props.connectionType]">
+            <Dropdown required :class="$style.field" label="Authentication Type" v-model="mAuthType" :items="allAuthTypes">
             </Dropdown>
 
-            <InputField v-if="authType?.name === 'sas_token'" label="SAS Token" type="password" v-model="auth.sasToken"
-                class="field">
+            <InputField required v-if="mAuthType?.name === 'sas_token'" label="SAS Token" type="password"
+                v-model="mAuth.sasToken" :class="$style.field">
             </InputField>
-            <InputField v-if="authType?.name === 'account_key'" label="Account Key" type="password" class="field"
-                v-model="auth.accountKey"></InputField>
+            <InputField required v-if="mAuthType?.name === 'account_key'" label="Account Key" type="password"
+                :class="$style.field" v-model="mAuth.accountKey"></InputField>
 
-            <template v-if="authType?.name === 'service_principal'">
-                <InputField label="Tenant ID" class="field" v-model="auth.tenantId"></InputField>
-                <InputField label="Subscription ID" class="field" v-model="auth.subscriptionId"></InputField>
-                <InputField label="Client ID" class="field" v-model="auth.spId"></InputField>
-                <InputField type="password" class="field" label="Client Secret" v-model="auth.spSecret"></InputField>
-            </template>
-
-            <template v-if="authType?.name === 'iam_user'">
-                <InputField label="Access Key ID" class="field" v-model="auth.iamAccessKeyId"></InputField>
-                <InputField type="password" class="field" label="Secret Access Key" v-model="auth.iamSecretKey">
+            <template v-if="mAuthType?.name === 'service_principal'">
+                <InputField required label="Tenant ID" :class="$style.field" v-model="mAuth.tenantId">
+                </InputField>
+                <InputField required label="Subscription ID" :class="$style.field"
+                    v-model="mAuth.subscriptionId"></InputField>
+                <InputField required label="Client ID" :class="$style.field" v-model="mAuth.clientId">
+                </InputField>
+                <InputField required type="password" :class="$style.field" label="Client Secret"
+                    v-model="mAuth.clientSecret">
                 </InputField>
             </template>
 
+            <template v-if="mAuthType?.name === 'iam_user'">
+                <InputField required label="Access Key ID" :class="$style.field" v-model="mAuth.iamAccessKeyId">
+                </InputField>
+                <InputField required type="password" :class="$style.field" label="Secret Access Key"
+                    v-model="mAuth.iamSecretKey">
+                </InputField>
+            </template>
+
+            <div :class="$style.actions">
+                <SimpleButton type="submit" :class="$style.button">Create</SimpleButton>
+                <SimpleButton type="reset" color="secondary" :class="$style.button">Cancel</SimpleButton>
+            </div>
         </form>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, type PropType } from 'vue';
-import Dropdown from './Dropdown.vue';
+import { computed, ref, type PropType } from 'vue';
+import Dropdown from './DropdownInput.vue';
 import InputField from './InputField.vue';
+import { authTypes } from '@/entities/authTypes';
+import SimpleButton from './SimpleButton.vue';
 
 const props = defineProps({
     connectionType: {
@@ -46,84 +63,56 @@ const props = defineProps({
     }
 });
 
-const s3AuthTypes = [
-    {
-        name: 'env_auth',
-        label: 'ENV Auth (CLI / Environment variables)'
-    },
-    {
-        name: 'iam_user',
-        label: 'IAM User'
-    },
-];
+const mAuthType = ref();
+const mForm = ref({
+    name: '',
+    targetUri: '',
+    localPath: './ducklake/',
+});
 
-const authTypes = {
-    blob: [
-        {
-            name: 'env_auth',
-            label: 'ENV Auth (CLI / Environment variables)'
-        },
-        {
-            name: 'account_key',
-            label: 'Account Key'
-        },
-        {
-            name: 'sas_token',
-            label: 'SAS Token'
-        },
-        {
-            name: 'service_principal',
-            label: 'Service Principal'
-        }
-    ],
-    minio: s3AuthTypes,
-    gcs: s3AuthTypes,
-    aws_s3: s3AuthTypes
-};
+const allAuthTypes = computed(() => authTypes[props.connectionType]);
 
-const authType = ref(authTypes[props.connectionType][0]);
-
-const auth = ref({
+const mAuth = ref({
     sasToken: '',
     accountKey: '',
-    spId: '',
-    spSecret: '',
+    clientId: '',
+    clientSecret: '',
     tenantId: '',
     subscriptionId: '',
     iamAccessKeyId: '',
     iamSecretKey: '',
 });
 
+function onSubmit(form) {
+    console.log("Submit: ", form.target.checkValidity(), mForm.value, mAuth.value);
+    if(!form.target.checkValidity()) return;
+}
+
+function onCancel() {
+
+}
+
 </script>
 
-<style scoped>
+<style module>
 .form {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
-    margin: 25px;
 }
 
-.form .field {
-    display: flex;
+.field {
     width: 350px;
-    flex-direction: column;
     margin: 0 20px 20px 0;
-    font-size: inherit;
-    align-items: stretch;
 }
 
-.actions button {
-    margin-right: 10px;
-    margin-top: 10px;
-    background-color: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
-    border: none;
-    padding: 6px 12px;
+.actions {
+    flex-basis: 100%;
 }
 
-.actions button:hover {
-    background-color: var(--vscode-button-hoverBackground);
+.button {
+    margin: 5px;
+    padding: 6px 35px;
 }
 </style>

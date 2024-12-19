@@ -49,17 +49,25 @@
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
 
-    --dl-input-background: var(--vscode-input-background, green);
-    --dl-input-foreground: var(--vscode-input-foreground, white);
+    --dl-input-background: var(--vscode-input-background, #1d1e19);
+    --dl-input-foreground: var(--vscode-input-foreground, #f8f8f2);
     --dl-input-border: var(--vscode-input-border, yellow);
 
-    --dl-editor-background: var(--vscode-editor-background, yellow);
-    --dl-editor-foreground: var(--vscode-editor-foreground, yellow);
+    --dl-dropdown-foreground: var(--vscode-dropdown-foreground, #f8f8f2);
+    --dl-dropdown-background: var(--vscode-dropdown-background, #1d1e19);
+    --dl-dropdown-list-background: var(--vscode-dropdown-list-background, #1e1f1c);
 
-    --dl-button-foreground: var(--vscode-button-foreground, yellow);
-    --dl-button-background: var(--vscode-button-background, yellow);
-    --dl-button-hoverBackground: var(--vscode-button-hoverBackground, yellow);
-    --dl-button-border: var(--vscode-button-border, yellow);
+    --dl-editor-background: var(--vscode-editor-background, #272822);
+    --dl-editor-foreground: var(--vscode-editor-foreground, #f8f8f2);
+
+    --dl-button-foreground: var(--vscode-button-foreground, #f8f8f2);
+    --dl-button-background: var(--vscode-button-background, #75715E);
+    --dl-button-hoverBackground: var(--vscode-button-hoverBackground, #ac9d50);
+    --dl-button-border: var(--vscode-button-border, #1d1e19);
+    
+    --dl-button-secondaryBackground: var(--vscode-button-secondaryBackground, #94a063);
+    --dl-button-secondaryForeground: var(--vscode-button-secondaryForeground, #94a063);
+    --dl-button-secondaryHoverBackground: var(--vscode-button-secondaryHoverBackground, #94a063);
 
   }
 }

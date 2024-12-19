@@ -1,12 +1,13 @@
 <template>
-    <div class="field">
-        <label>{{ label }}{{ required ? ' *' : '' }}</label>
-        <input :type="type" :placeholder="placeholder" v-model="vModel" @change="onChange">
+    <div :class="$style.field">
+        <label :class="$style.label">{{ label }}{{ required ? ' *' : '' }}</label>
+        <input :class="$style.input" :required="props.required" :type="props.type" :placeholder="props.placeholder"
+            v-model="vModel">
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, type PropType } from 'vue';
+import { type PropType } from 'vue';
 
 
 const props = defineProps({
@@ -22,40 +23,29 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    modelValue: {
-        type: String,
-        default: null,
-    },
     type: {
         type: String as PropType<'text' | 'password' | 'number' | 'checkbox'>,
         default: 'text'
     }
 });
-const vModel = ref(props.modelValue);
-
-
-function onChange() {
-    emit('update:modelValue', vModel.value);
-}
-
-const emit = defineEmits(['update:modelValue']);
+const vModel = defineModel();
 
 </script>
-<style lang="css" scoped>
+<style module>
 .field {
-    margin: 5px;
+    margin: 10px;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
 }
 
-input {
+.input {
     color: var(--dl-input-foreground);
     background-color: var(--dl-input-background);
     padding: 3px 7px 3px 7px;
 }
 
-label {
+.label {
     padding: 3px 0px 3px 0px;
-    /* color: var(--dl-editor-foreground); */
 }
 </style>

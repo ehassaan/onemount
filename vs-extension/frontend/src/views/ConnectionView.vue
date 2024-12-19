@@ -1,17 +1,18 @@
 <template>
-    <div class="container">
-        <h1 class="heading">Create Connection</h1>
+    <div :class="$style.container">
+        <h1>Create Connection</h1>
 
-        <Dropdown label="Connection Type" class="connection-type" :items="items" v-model="selected"></Dropdown>
+        <Dropdown label="Connection Type" :class="$style.connection_type" :items="items" v-model="selected">
+        </Dropdown>
 
-        <ConnectionForm v-if="selected" :connection-type="selected.name"></ConnectionForm>
+        <ConnectionForm v-if="selected" :connection-type="selected?.name"></ConnectionForm>
 
     </div>
 </template>
 
 <script setup lang="ts">
 import ConnectionForm from '@/components/ConnectionForm.vue';
-import Dropdown from '@/components/Dropdown.vue';
+import Dropdown from '@/components/DropdownInput.vue';
 import { ref } from 'vue';
 
 const selected = ref();
@@ -36,15 +37,19 @@ const items = [
 ];
 </script>
 
-<style scoped lang="css">
+<style module>
 .container {
     display: flex;
     flex-direction: column;
     align-items: start;
-    padding: 15px;
+    padding: 25px;
+    margin: 10px;
+    background-color: var(--dl-editor-background);
+    color: var(--dt-editor-foreground);
 }
 
-.connection-type {
-    width: auto;
+.connection_type {
+    width: 350px;
+    margin: 0 20px 20px 0;
 }
 </style>
