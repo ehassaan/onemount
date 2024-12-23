@@ -32,4 +32,6 @@ export const authTypes = {
     minio: s3AuthTypes,
     gcs: s3AuthTypes,
     aws_s3: s3AuthTypes
-};
+} as { [k: string]: { name: AuthType; label: string; }[]; };
+
+export type AuthType = 'env_auth' | 'iam_user' | 'account_key' | 'sas_token' | 'service_principal';

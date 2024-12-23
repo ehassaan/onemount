@@ -12,7 +12,8 @@
             <InputField v-model="mForm.localPath" :class="$style.field" label="Local Path" placeholder="./ducklake/">
             </InputField>
 
-            <Dropdown required :class="$style.field" label="Authentication Type" v-model="mAuthType" :items="allAuthTypes">
+            <Dropdown required :class="$style.field" label="Authentication Type" v-model="mAuthType"
+                :items="allAuthTypes">
             </Dropdown>
 
             <InputField required v-if="mAuthType?.name === 'sas_token'" label="SAS Token" type="password"
@@ -24,8 +25,8 @@
             <template v-if="mAuthType?.name === 'service_principal'">
                 <InputField required label="Tenant ID" :class="$style.field" v-model="mAuth.tenantId">
                 </InputField>
-                <InputField required label="Subscription ID" :class="$style.field"
-                    v-model="mAuth.subscriptionId"></InputField>
+                <InputField required label="Subscription ID" :class="$style.field" v-model="mAuth.subscriptionId">
+                </InputField>
                 <InputField required label="Client ID" :class="$style.field" v-model="mAuth.clientId">
                 </InputField>
                 <InputField required type="password" :class="$style.field" label="Client Secret"
@@ -51,10 +52,10 @@
 
 <script setup lang="ts">
 import { computed, ref, type PropType } from 'vue';
-import Dropdown from './DropdownInput.vue';
-import InputField from './InputField.vue';
-import { authTypes } from '@/entities/authTypes';
-import SimpleButton from './SimpleButton.vue';
+import Dropdown from './atoms/DropdownInput.vue';
+import InputField from './atoms/InputField.vue';
+import { type AuthType, authTypes } from '@/entities/authTypes';
+import SimpleButton from './atoms/SimpleButton.vue';
 
 const props = defineProps({
     connectionType: {
@@ -63,7 +64,9 @@ const props = defineProps({
     }
 });
 
-const mAuthType = ref();
+const emit = defineEmits(['submit', 'cancel']);
+
+const mAuthType = ref<{ name: AuthType, label: string; }>();
 const mForm = ref({
     name: '',
     targetUri: '',
@@ -83,13 +86,46 @@ const mAuth = ref({
     iamSecretKey: '',
 });
 
-function onSubmit(form) {
-    console.log("Submit: ", form.target.checkValidity(), mForm.value, mAuth.value);
-    if(!form.target.checkValidity()) return;
+function onSubmit(event: any) {
+    console.log("Submit: ", event.target.checkValidity(), mForm.value, mAuth.value);
+    if (!event.target.checkValidity()) return;
+
+    let auth = {};
+
+    if (mAuthType.value?.name === "service_principal") {
+        auth = {
+            tenantId: mAuth.value.tenantId,
+            subscriptionId: mAuth.value.subscriptionId,
+            clientId: mAuth.value.clientId,
+            clientSecret: mAuth.value.clientSecret,
+        };
+    }
+    else if (mAuthType.value?.name === "iam_user") {
+        auth = {
+            iamAccessKeyId: mAuth.value.iamAccessKeyId,
+            iamSecretKey: mAuth.value.iamSecretKey,
+        };
+    }
+    else if (mAuthType.value?.name === "sas_token") {
+        auth = {
+            sasToken: mAuth.value.sasToken,
+        };
+    }
+    else if (mAuthType.value?.name === "account_key") {
+        auth = {
+            accountKey: mAuth.value.accountKey,
+        };
+    }
+    else {
+        auth = {};
+    }
+    emit('submit', { ...mForm.value, auth: { type: mAuthType.value?.name, ...auth } });
+    event.preventDefault();
 }
 
-function onCancel() {
-
+function onCancel(event: any) {
+    emit('cancel');
+    event.preventDefault();
 }
 
 </script>
