@@ -70,7 +70,7 @@ const mAuthType = ref<{ name: AuthType, label: string; }>();
 const mForm = ref({
     name: '',
     targetUri: '',
-    localPath: './ducklake/',
+    localPath: './_data/',
 });
 
 const allAuthTypes = computed(() => authTypes[props.connectionType]);
@@ -141,7 +141,7 @@ function onCancel(event: any) {
 .field {
     width: 350px;
     margin: 0 20px 20px 0;
-}
+} 
 
 .actions {
     flex-basis: 100%;

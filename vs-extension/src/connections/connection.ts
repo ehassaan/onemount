@@ -1,44 +1,22 @@
 
 import WebviewPage from '@/providers/WebviewPage';
-import { AddConnectionOptions, getTemplate } from '@/views/add-connection';
+// import { AddConnectionOptions, getTemplate } from '@/views/add-connection';
 import vscode, { ExtensionContext } from "vscode";
 import { BackendOptions, BackendOption, FSMount } from "@ducklake/core";
-import path from 'path';
+import { readFile } from "node:fs/promises";
 
 let connections = [];
 
-
 export default function register(context: ExtensionContext) {
 
-    vscode.commands.registerCommand("ducklake.addConnection", (args) => {
-        const template = getTemplate();
+    vscode.commands.registerCommand("ducklake.addConnection", async (args) => {
         const options = BackendOptions.s3.options;
-        let panel = new WebviewPage<AddConnectionOptions>("addConnection", "Add Connection", template);
+        const template = await getTemplate();
+        let panel = new WebviewPage("addConnection", "Add Connection", template);
         panel.show({
             fields: Object.values(options) as BackendOption[],
         });
-        // let panel = vscode.window.createWebviewPanel(
-        //     "addConnection",
-        //     "Add Connection",
-        //     {
-        //         viewColumn: vscode.ViewColumn.One,
-        //         preserveFocus: true,
-        //     },
-        //     {
-        //         enableScripts: true,
-        //         retainContextWhenHidden: true, // @OPTIMIZE remove and migrate to state restore
-        //         enableCommandUris: true,
-        //         localResourceRoots: [vscode.Uri.file(path.resolve(__dirname))]
-        //         // enableFindWidget: true,
-        //     }
-        // );
-        // panel.webview.html = template({
-        //     title: "add asdasd",
-        //     fields: Object.values(options) as BackendOption[],
-        //     nonce: getNonce(),
-        //     cspSource: panel.webview.cspSource,
-        //     scriptUri: panel.webview.asWebviewUri(vscode.Uri.file(path.resolve(__dirname, 'views', 'add-connection', 'script.js'))),
-        // });
+
         panel.messagesHandler = async ({ command, data }) => {
             console.log("Action: ", command, "data: ", data);
             if (command == "cancel") {
@@ -51,7 +29,7 @@ export default function register(context: ExtensionContext) {
                     await mount.mount();
                     panel.hide();
                 }
-                catch(e) {
+                catch (e) {
                     console.log("Error while mounting: ", e);
                     panel.sendMessage("error", e.message);
                 }
@@ -61,6 +39,11 @@ export default function register(context: ExtensionContext) {
             console.log("Webiew panel disposed");
         });
     });
+}
+
+async function getTemplate() {
+    const file = (await readFile(`${__dirname}/frontend/index.html`)).toString("utf8");
+    return file;
 }
 
 function getNonce() {

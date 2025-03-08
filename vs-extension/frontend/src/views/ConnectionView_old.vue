@@ -2,21 +2,18 @@
     <div :class="$style.container">
         <h1>Create Connection</h1>
 
-        <Dropdown label="Connection Type" :class="$style.connection_type" :items="items" v-model="selected"
-            @update:model-value="clearForm">
+        <Dropdown label="Connection Type" :class="$style.connection_type" :items="items" v-model="selected">
         </Dropdown>
 
-        <DynamicForm @submit="onCreate" @cancel="onCancel" v-if="selected" :fields="connectionTypes[selected.name]"
-            v-model="form">
-        </DynamicForm>
+        <ConnectionForm v-if="selected" :connection-type="selected?.name" @submit="onCreate" @cancel="onCancel">
+        </ConnectionForm>
 
     </div>
 </template>
 
 <script setup lang="ts">
-import DynamicForm from '@/components/DynamicForm.vue';
+import ConnectionForm from '@/components/ConnectionForm.vue';
 import Dropdown from '@/components/atoms/DropdownInput.vue';
-import { connectionTypes } from '@/entities/formFields';
 import { ref } from 'vue';
 
 const selected = ref();
@@ -40,8 +37,6 @@ const items = [
     },
 ];
 
-const form = ref<any>({});
-
 // for dev
 if (import.meta.env.DEV) {
     (window as any).acquireVsCodeApi = () => ({
@@ -53,16 +48,11 @@ if (import.meta.env.DEV) {
 
 const vscode = (window as any).acquireVsCodeApi();
 
-function clearForm() {
-    form.value = {};
-}
-
 function onCreate(data: any) {
-    console.log("Create: ", data);
-    // vscode.postMessage({
-    //     command: 'connection.create',
-    //     data: data
-    // });
+    vscode.postMessage({
+        command: 'connection.create',
+        data: data
+    });
 }
 
 function onCancel() {

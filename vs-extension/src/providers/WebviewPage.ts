@@ -18,7 +18,7 @@ export enum DefaultActions {
     SET_STATE = "SET_STATE",
 }
 
-export default class WebviewPage<Options = any> implements Disposable {
+export default class WebviewPage implements Disposable {
     get serializationId() {
         return this.id;
     }
@@ -48,7 +48,7 @@ export default class WebviewPage<Options = any> implements Disposable {
         this.title = title;
     }
 
-    public show(options: Options) {
+    public show() {
         if (!this.panel) {
             this.panel = window.createWebviewPanel(
                 this.serializationId,
@@ -76,13 +76,13 @@ export default class WebviewPage<Options = any> implements Disposable {
                 this.disposables
             );
             this.panel.onDidDispose(this.dispose, null, this.disposables);
-            this.panel.webview.html = this.getHtml({
-                nonce: getNonce(),
-                cspSource: this.panel.webview.cspSource,
-                scriptUri: this.panel.webview.asWebviewUri(Uri.file(path.resolve(__dirname, 'views', 'add-connection', 'script.js'))),
-                title: this.title,
-                ...options,
-            });
+            // this.panel.webview.html = this.getHtml({
+            //     nonce: getNonce(),
+            //     cspSource: this.panel.webview.cspSource,
+            //     scriptUri: this.panel.webview.asWebviewUri(Uri.file(path.resolve(__dirname, 'frontend', 'index.js'))),
+            //     title: this.title,
+            //     ...options,
+            // });
         } else {
             this.panel.reveal(undefined, this.preserveFocus);
         }
