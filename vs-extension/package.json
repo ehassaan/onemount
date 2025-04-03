@@ -37,27 +37,11 @@
   ],
   "type": "commonjs",
   "main": "./out/index.js",
-  "binary": {
-    "module_name": "duckdb",
-    "module_path": "./lib/binding/",
-    "host": "https://npm.duckdb.org/duckdb"
-  },
   "activationEvents": [
     "onNotebook:ipynb-ducklab",
     "onNotebook:isql"
   ],
   "contributes": {
-    "notebooks": [
-      {
-        "type": "isql",
-        "displayName": "Ducklab",
-        "selector": [
-          {
-            "filenamePattern": "*.isql"
-          }
-        ]
-      }
-    ],
     "commands": [
       {
         "command": "ducklake.addConnection",

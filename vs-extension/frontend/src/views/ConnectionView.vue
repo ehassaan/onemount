@@ -6,8 +6,8 @@
             @update:model-value="clearForm">
         </Dropdown>
 
-        <DynamicForm @submit="onCreate" @cancel="onCancel" v-if="selected" :fields="connectionTypes[selected.name]"
-            v-model="form">
+        <DynamicForm @submit="onCreate" @cancel="onCancel" v-if="selected"
+            :fields="connectionTypes[selected.name as keyof typeof connectionTypes]" v-model="form">
         </DynamicForm>
 
     </div>
@@ -19,9 +19,11 @@ import Dropdown from '@/components/atoms/DropdownInput.vue';
 import { connectionTypes } from '@/entities/formFields';
 import { ref } from 'vue';
 
-const selected = ref();
-
 const items = [
+    {
+        name: 'none',
+        label: 'Select Provider'
+    },
     {
         name: 'minio',
         label: 'Minio',
@@ -40,7 +42,10 @@ const items = [
     },
 ];
 
+const selected = ref(items[0]);
+
 const form = ref<any>({});
+let vscode: any = null;
 
 // for dev
 if (import.meta.env.DEV) {
@@ -50,23 +55,31 @@ if (import.meta.env.DEV) {
         }
     });
 }
-
-const vscode = (window as any).acquireVsCodeApi();
+if (!(window as any).acquireVsCodeApi) {
+    console.log(window);
+    console.error("No acquireVsCodeApi found. Please make sure the code is running in VS Code");
+}
+else {
+    vscode = (window as any).acquireVsCodeApi();
+}
 
 function clearForm() {
     form.value = {};
 }
 
+
 function onCreate(data: any) {
-    console.log("Create: ", data);
-    // vscode.postMessage({
-    //     command: 'connection.create',
-    //     data: data
-    // });
+    console.log("On Create: ", data);
+    data = { ...data, authType: selected.value?.name }
+    vscode?.postMessage({
+        command: 'connection.create',
+        data: data
+    });
 }
 
 function onCancel() {
-    vscode.postMessage({
+    console.log("On Cancel");
+    vscode?.postMessage({
         command: 'cancel',
     });
 }

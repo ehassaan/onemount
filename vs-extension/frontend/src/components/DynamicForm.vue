@@ -1,21 +1,19 @@
 <template>
-    <form :class="$style.form" @submit.prevent="emit('submit', formData)" @reset.prevent="emit('cancel')">
+    <form :class="$style.form" @submit.prevent="() => emit('submit', formData)" @reset.prevent="() => emit('cancel')">
 
-        <div v-for="(field, index) in fields" :key="field.name">
+        <template v-for="(field, index) in fields" :key="field.name">
 
             <slot :name="`field-${field.type}`" v-bind="{ field, index }">
-                <div>
-                    <DynamicField :field="field" v-model="formData[field.name]" :class="$style.field"></DynamicField>
-                </div>
+                <DynamicField :field="field" v-model="formData[field.name]" :class="$style.field"></DynamicField>
 
-                <div v-if="(field.type === 'select')">
+                <template v-if="(field.type === 'select')">
                     <DynamicField v-for="nested of getNested(field, formData[field.name])" :key="nested.name"
                         :field="nested" v-model="formData[nested.name]" :class="$style.field">
                     </DynamicField>
-                </div>
+                </template>
 
             </slot>
-        </div>
+        </template>
         <div :class="$style.actions">
             <SimpleButton type="submit" :class="$style.button">{{ submitText }}</SimpleButton>
             <SimpleButton type="reset" color="secondary" :class="$style.button">Cancel</SimpleButton>
@@ -28,7 +26,6 @@ import type { IDynamicField } from '@/entities/DynamicField';
 import { type DropdownItem } from './atoms/DropdownInput.vue';
 import SimpleButton from './atoms/SimpleButton.vue';
 import DynamicField from './DynamicField.vue';
-import { ref } from 'vue';
 
 const props = withDefaults(defineProps<{
     submitText?: string,
@@ -36,19 +33,18 @@ const props = withDefaults(defineProps<{
 }>(), {
     submitText: 'Create'
 });
-let emit = defineEmits(['submit', 'cancel']);
+const emit = defineEmits(['submit', 'cancel']);
 
-const formData: any = defineModel({
+const formData = defineModel<any>({
     default: {}
 });
 
-function getNested(field: IDynamicField, option: DropdownItem) {
-    if (!option || !field.options || field.type !== 'select') return [];
+function getNested(field: IDynamicField, selection: DropdownItem) {
+    if (!selection || !field.options || field.type !== 'select') return [];
 
-    const matches = field.options?.filter(o => o.name === option.name);
+    const matches = field.options?.filter(o => o.name === selection.name);
     if (matches.length <= 0) return [];
 
-    console.log("Matched: ", matches[0]);
     return matches[0].nested || [];
 }
 

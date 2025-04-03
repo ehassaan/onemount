@@ -2,6 +2,7 @@ import { Uri, commands, Disposable, EventEmitter, ViewColumn, WebviewPanel, wind
 import Context from '@/services/context';
 import path from 'path';
 import { EXT_NAMESPACE } from '@/utils/constants';
+import { Options } from 'ejs';
 // import { DefaultUIAction } from './action';
 
 export enum DefaultActions {
@@ -37,18 +38,39 @@ export default class WebviewPage implements Disposable {
     public readonly id: string;
     public readonly title: string;
     public messagesHandler: (...args: any) => void;
-    private getHtml = (options: Options) => '';
+    private getHtml = async (opts: { cspSource: string; }) => '';
+    private extensionUri: Uri;
+    private nonce: string;
 
     private panel: WebviewPanel;
     private disposables: Disposable[] = [];
 
-    public constructor(id: string, title: string, getHtml: (options: Options) => string) {
-        this.getHtml = getHtml;
-        this.id = id;
-        this.title = title;
+    public constructor(args: { id: string, title: string, getHtml: () => Promise<string>; extensionUri: Uri; }) {
+        this.id = args.id;
+        this.title = args.title;
+        this.extensionUri = args.extensionUri;
+        this.nonce = getNonce();
+
+        this.getHtml = async (opts: { cspSource: string; }) => {
+            let html = await args.getHtml();
+            html = html.replaceAll("${cspSource}", opts.cspSource);
+            console.log("HTML: ", html);
+            let scriptName = html.match(new RegExp(/src=\"\/assets\/(index-.+[.]js)\"/))[1];
+            let styleName = html.match(new RegExp(/href=\"\/assets\/(index-.+[.]css)\"/))[1];
+
+            const scriptUri = this.panel.webview.asWebviewUri(Uri.file(path.resolve(__dirname, 'frontend', 'assets', scriptName)));
+            const styleUri = this.panel.webview.asWebviewUri(Uri.file(path.resolve(__dirname, 'frontend', 'assets', styleName)));
+
+            html = html.replace(`src="/assets/${scriptName}"`, `nonce="${this.nonce}" src="${scriptUri.toString()}"`);
+            html = html.replace(`/assets/${styleName}`, styleUri.toString());
+            html = html.replaceAll("${title}", this.title);
+            html = html.replaceAll("${nonce}", this.nonce);
+            console.log(html);
+            return html;
+        };
     }
 
-    public show() {
+    public async show() {
         if (!this.panel) {
             this.panel = window.createWebviewPanel(
                 this.serializationId,
@@ -59,9 +81,9 @@ export default class WebviewPage implements Disposable {
                 },
                 {
                     enableScripts: true,
-                    retainContextWhenHidden: true, // @OPTIMIZE remove and migrate to state restore
+                    // retainContextWhenHidden: true, // @OPTIMIZE remove and migrate to state restore
                     enableCommandUris: true,
-                    localResourceRoots: [Uri.file(path.resolve(__dirname))]
+                    localResourceRoots: [Uri.file(path.resolve(__dirname, 'frontend', 'assets')]
                     // enableFindWidget: true,
                 }
             );
@@ -76,13 +98,9 @@ export default class WebviewPage implements Disposable {
                 this.disposables
             );
             this.panel.onDidDispose(this.dispose, null, this.disposables);
-            // this.panel.webview.html = this.getHtml({
-            //     nonce: getNonce(),
-            //     cspSource: this.panel.webview.cspSource,
-            //     scriptUri: this.panel.webview.asWebviewUri(Uri.file(path.resolve(__dirname, 'frontend', 'index.js'))),
-            //     title: this.title,
-            //     ...options,
-            // });
+            const cspSource = this.panel.webview.cspSource;
+
+            this.panel.webview.html = await this.getHtml({ cspSource: cspSource });
         } else {
             this.panel.reveal(undefined, this.preserveFocus);
         }

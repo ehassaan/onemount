@@ -12,10 +12,14 @@ export default function register(context: ExtensionContext) {
     vscode.commands.registerCommand("ducklake.addConnection", async (args) => {
         const options = BackendOptions.s3.options;
         const template = await getTemplate();
-        let panel = new WebviewPage("addConnection", "Add Connection", template);
-        panel.show({
-            fields: Object.values(options) as BackendOption[],
+        console.log("Template: ", template)
+        let panel = new WebviewPage({
+            id: "add-connection",
+            title: "Add Connection",
+            getHtml: getTemplate,
+            extensionUri: context.extensionUri
         });
+        await panel.show();
 
         panel.messagesHandler = async ({ command, data }) => {
             console.log("Action: ", command, "data: ", data);
@@ -46,12 +50,4 @@ async function getTemplate() {
     return file;
 }
 
-function getNonce() {
-    let text = '';
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 32; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-}
 

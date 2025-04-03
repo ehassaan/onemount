@@ -6,6 +6,7 @@ export const azure: IDynamicField[] = [
         name: 'name',
         label: 'Name',
         placeholder: 'myconnection',
+        required: true,
         type: 'text',
     },
     {
@@ -90,6 +91,7 @@ export const minio: IDynamicField[] = [
         name: 'name',
         label: 'Name',
         placeholder: 'myconnection',
+        required: true,
         type: 'text',
     },
     {
@@ -105,10 +107,6 @@ export const minio: IDynamicField[] = [
         required: true,
         type: 'select',
         options: [
-            {
-                name: 'env_auth',
-                label: 'ENV Auth (CLI / Environment variables)'
-            },
             {
                 name: 'iam',
                 label: 'IAM User',
@@ -138,6 +136,7 @@ export const aws: IDynamicField[] = [
         name: 'name',
         label: 'Name',
         placeholder: 'myconnection',
+        required: true,
         type: 'text',
     },
     {
@@ -193,6 +192,7 @@ export const gcs: IDynamicField[] = [
         name: 'name',
         label: 'Name',
         placeholder: 'myconnection',
+        required: true,
         type: 'text',
     },
     {

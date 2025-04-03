@@ -25,8 +25,7 @@ const props = defineProps<{
     field: IDynamicField;
 }>();
 
-const model: any = defineModel();
-
+const model = defineModel<any>();
 
 </script>
 <style module scoped>

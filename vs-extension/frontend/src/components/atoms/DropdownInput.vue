@@ -5,14 +5,14 @@
             :placeholder="'--' + label + '--'">
             <!-- <option :class="$style.dropdown_option" hidden disabled :value="undefined" :selected="!model">-- {{ label }}
                 --</option> -->
-            <option :class="$style.dropdown_option" v-for="item in props.items" :key="item.name" :value="item.name">{{
+            <option :class="$style.dropdown_option" :selected="model?.name === item.name" v-for="item in props.items" :key="item.name" :value="item.name">{{
                 item.label }}</option>
         </select>
     </div>
 </template>
 
 <script setup lang="ts">
-import { watch, type PropType } from 'vue';
+import { onMounted, watch, type PropType } from 'vue';
 
 export interface DropdownItem {
     name: string,
@@ -40,14 +40,23 @@ const model = defineModel({ type: Object as PropType<DropdownItem>, required: fa
 
 
 function onChange(val: any) {
-    console.log("Changed: ", val.target);
     model.value = props.items.find(item => item.name === val.target.value);
     // emit('update:modelValue', props.items.find(item => item.name === val.target.value));
 }
 
+onMounted(() => {
+    console.log("Item Selected: ", model.value, props.items);
+    if (props.items.length > 0) {
+        model.value = props.items[0];
+    }
+});
+
+
 watch(() => props.items, () => {
-    // emit('update:modelValue', props.items[0]);
-    model.value = undefined;
+    console.log("Items Changed: ", props.items)
+    if (props.items.length > 0) {
+        model.value = props.items[0];
+    }
 });
 
 </script>
