@@ -118,7 +118,7 @@ export const minio: IDynamicField[] = [
                         type: 'text',
                     },
                     {
-                        name: 'secret_access_key ',
+                        name: 'secret_access_key',
                         label: 'Secret Access Key',
                         required: true,
                         type: 'password',

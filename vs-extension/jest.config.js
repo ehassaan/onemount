@@ -1,19 +1,7 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
-// module.exports =
-
-export default {
-  moduleDirectories: [
-    "node_modules",
-    "src",
-  ],
-  moduleNameMapper: {
-    "@/(.*)": "<rootDir>/src/$1",
-  },
+module.exports = {
   testEnvironment: "node",
   transform: {
-    "^.+.tsx?$": ["ts-jest", {}],
+    "^.+\.tsx?$": ["ts-jest",{}],
   },
-  transformIgnorePatterns: [
-    "node_modules/(?!(@apache-arrow/ts))"
-  ]
 };

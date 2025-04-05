@@ -14,7 +14,7 @@
     "package": "./package.sh",
     "publish": "find ./dist -name ducklab*.vsix -exec sh -c 'npx vsce publish --packagePath {} -p $VSCE_PAT || exit 1' \\;",
     "lint": "eslint src --ext .ts,.tsx",
-    "test": "jest"
+    "test": "jest tests/"
   },
   "engines": {
     "vscode": "^1.61.0"
@@ -104,6 +104,12 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@ducklake/core": "../core/ducklake-core-0.2.4.tgz"
+    "@ducklake/core": "../core/ducklake-core-0.2.7.tgz"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@vscode/vsce-sign",
+      "keytar"
+    ]
   }
 }

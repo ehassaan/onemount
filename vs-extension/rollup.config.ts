@@ -1,7 +1,7 @@
 
 import { RollupOptions, Plugin, ObjectHook } from "rollup";
 import typescript from '@rollup/plugin-typescript';
-import del from 'rollup-plugin-delete';
+import copy from "rollup-plugin-copy";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from '@rollup/plugin-commonjs';
 import json from "@rollup/plugin-json";
@@ -16,6 +16,13 @@ const config: RollupOptions[] = [
             nodeResolve({ preferBuiltins: true }),
             commonjs({
                 // ignoreDynamicRequires: true
+            }),
+            copy({
+                targets: [{
+                    src: "node_modules/@ducklake/core/dist/lib/*",
+                    dest: "out/lib/"
+                }],
+                hook: "buildEnd"
             })
         ],
         external: [
